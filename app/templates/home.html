@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Chat App</title></head>
+<body>
+    <h2>WebSocket Chat</h2>
+    <textarea id="chat-log" cols="100" rows="20" readonly></textarea><br>
+    Username: <input id="username-input" value="User1" type="text"><br>
+    Message: <input id="chat-message-input" type="text" size="80">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+        const chatLog = document.querySelector('#chat-log');
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            chatLog.value += `[${data.username}] ${data.message}\n`;
+        };
+
+        function sendMessage() {
+            const message = document.querySelector('#chat-message-input').value;
+            const username = document.querySelector('#username-input').value;
+            socket.send(JSON.stringify({'username': username, 'message': message}));
+            document.querySelector('#chat-message-input').value = '';
+        }
+    </script>
+</body>
+</html>
